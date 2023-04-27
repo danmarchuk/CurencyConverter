@@ -16,6 +16,12 @@
 		93508A5629D4607000C26979 /* CurencyConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93508A5529D4607000C26979 /* CurencyConverterTests.swift */; };
 		93508A6029D4607000C26979 /* CurencyConverterUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93508A5F29D4607000C26979 /* CurencyConverterUITests.swift */; };
 		93508A6229D4607000C26979 /* CurencyConverterUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93508A6129D4607000C26979 /* CurencyConverterUITestsLaunchTests.swift */; };
+		93564C2E29D7821C00737248 /* ExchnangeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93564C2D29D7821C00737248 /* ExchnangeManager.swift */; };
+		93564C3029D7834000737248 /* ExchangeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93564C2F29D7834000737248 /* ExchangeData.swift */; };
+		93564C3229D7B04800737248 /* ExchangeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93564C3129D7B04800737248 /* ExchangeModel.swift */; };
+		93A005C829D76F3300433118 /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A005C629D76F3300433118 /* TableViewCell.swift */; };
+		93A005C929D76F3300433118 /* TableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 93A005C729D76F3300433118 /* TableViewCell.xib */; };
+		93EE9C1D29F9C9F300C9DCD2 /* Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93EE9C1C29F9C9F300C9DCD2 /* Manager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +55,12 @@
 		93508A5B29D4607000C26979 /* CurencyConverterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CurencyConverterUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		93508A5F29D4607000C26979 /* CurencyConverterUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurencyConverterUITests.swift; sourceTree = "<group>"; };
 		93508A6129D4607000C26979 /* CurencyConverterUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurencyConverterUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		93564C2D29D7821C00737248 /* ExchnangeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchnangeManager.swift; sourceTree = "<group>"; };
+		93564C2F29D7834000737248 /* ExchangeData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeData.swift; sourceTree = "<group>"; };
+		93564C3129D7B04800737248 /* ExchangeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeModel.swift; sourceTree = "<group>"; };
+		93A005C629D76F3300433118 /* TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
+		93A005C729D76F3300433118 /* TableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableViewCell.xib; sourceTree = "<group>"; };
+		93EE9C1C29F9C9F300C9DCD2 /* Manager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Manager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,8 +113,14 @@
 			children = (
 				93508A3E29D4606F00C26979 /* AppDelegate.swift */,
 				93508A4029D4606F00C26979 /* SceneDelegate.swift */,
+				93EE9C1C29F9C9F300C9DCD2 /* Manager.swift */,
 				93508A4229D4606F00C26979 /* ViewController.swift */,
+				93564C2D29D7821C00737248 /* ExchnangeManager.swift */,
+				93564C3129D7B04800737248 /* ExchangeModel.swift */,
+				93564C2F29D7834000737248 /* ExchangeData.swift */,
 				93508A4429D4606F00C26979 /* Main.storyboard */,
+				93A005C629D76F3300433118 /* TableViewCell.swift */,
+				93A005C729D76F3300433118 /* TableViewCell.xib */,
 				93508A4729D4607000C26979 /* Assets.xcassets */,
 				93508A4929D4607000C26979 /* LaunchScreen.storyboard */,
 				93508A4C29D4607000C26979 /* Info.plist */,
@@ -232,6 +250,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				93508A4B29D4607000C26979 /* LaunchScreen.storyboard in Resources */,
+				93A005C929D76F3300433118 /* TableViewCell.xib in Resources */,
 				93508A4829D4607000C26979 /* Assets.xcassets in Resources */,
 				93508A4629D4606F00C26979 /* Main.storyboard in Resources */,
 			);
@@ -259,6 +278,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				93508A4329D4606F00C26979 /* ViewController.swift in Sources */,
+				93564C3229D7B04800737248 /* ExchangeModel.swift in Sources */,
+				93564C2E29D7821C00737248 /* ExchnangeManager.swift in Sources */,
+				93EE9C1D29F9C9F300C9DCD2 /* Manager.swift in Sources */,
+				93564C3029D7834000737248 /* ExchangeData.swift in Sources */,
+				93A005C829D76F3300433118 /* TableViewCell.swift in Sources */,
 				93508A3F29D4606F00C26979 /* AppDelegate.swift in Sources */,
 				93508A4129D4606F00C26979 /* SceneDelegate.swift in Sources */,
 			);

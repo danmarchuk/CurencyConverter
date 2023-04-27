@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="TableViewCell" rowHeight="84" id="KGk-i7-Jjw" customClass="TableViewCell" customModule="CurencyConverter" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="333" height="84"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="333" height="84"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="STe-3y-7EJ">
+                        <rect key="frame" x="2" y="2" width="329" height="45"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KaO-ic-ae9">
+                                <rect key="frame" x="0.0" y="0.0" width="75" height="45"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WNb-ev-zi8">
+                                        <rect key="frame" x="-2.6666666666666643" y="12.666666666666664" width="80.333333333333314" height="20"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="20" id="kBx-gw-giD"/>
+                                        </constraints>
+                                        <color key="tintColor" systemColor="labelColor"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" imagePlacement="trailing" title="USD   ">
+                                            <imageReference key="image" image="chevron.forward" catalog="system" symbolScale="medium"/>
+                                            <fontDescription key="titleFontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
+                                        </buttonConfiguration>
+                                        <connections>
+                                            <action selector="currencyButton:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="yLC-9l-czf"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstItem="WNb-ev-zi8" firstAttribute="centerX" secondItem="KaO-ic-ae9" secondAttribute="centerX" id="Agv-EK-Mor"/>
+                                    <constraint firstItem="WNb-ev-zi8" firstAttribute="centerY" secondItem="KaO-ic-ae9" secondAttribute="centerY" id="Auh-jW-2BV"/>
+                                    <constraint firstAttribute="width" constant="75" id="SyC-Uw-zQy"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ggj-xr-Kb5">
+                                <rect key="frame" x="85" y="0.0" width="244" height="45"/>
+                                <subviews>
+                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="xkF-hX-vie">
+                                        <rect key="frame" x="0.0" y="0.0" width="244" height="45"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                        <connections>
+                                            <action selector="currencyTextField:" destination="KGk-i7-Jjw" eventType="editingDidEnd" id="RBJ-Ih-SQE"/>
+                                        </connections>
+                                    </textField>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="xkF-hX-vie" secondAttribute="trailing" id="6BB-wf-me7"/>
+                                    <constraint firstItem="xkF-hX-vie" firstAttribute="leading" secondItem="ggj-xr-Kb5" secondAttribute="leading" id="MQY-YJ-seP"/>
+                                    <constraint firstAttribute="bottom" secondItem="xkF-hX-vie" secondAttribute="bottom" id="dCt-lB-TNZ"/>
+                                    <constraint firstItem="xkF-hX-vie" firstAttribute="top" secondItem="ggj-xr-Kb5" secondAttribute="top" id="jA0-V4-TBm"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="45" id="p3l-ps-BIt"/>
+                        </constraints>
+                    </stackView>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="STe-3y-7EJ" secondAttribute="trailing" constant="2" id="C4J-ib-leP"/>
+                    <constraint firstItem="STe-3y-7EJ" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="2" id="Md4-Cd-lL9"/>
+                    <constraint firstAttribute="bottom" secondItem="STe-3y-7EJ" secondAttribute="bottom" constant="10" id="lrx-pn-Ihl"/>
+                    <constraint firstItem="STe-3y-7EJ" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="2" id="tlC-aP-CBy"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="currencyButtonOutlet" destination="WNb-ev-zi8" id="Ixf-yD-QYS"/>
+                <outlet property="currencyTextFieldOutlet" destination="xkF-hX-vie" id="cee-gz-T1V"/>
+            </connections>
+            <point key="canvasLocation" x="924.4274809160305" y="309.85915492957747"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="chevron.forward" catalog="system" width="97" height="128"/>
+        <systemColor name="labelColor">
+            <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
