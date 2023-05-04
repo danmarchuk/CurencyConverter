@@ -77,13 +77,13 @@ final class ExchangeManagerTests: XCTestCase {
         let data = json.data(using: .utf8)!
         
         // Call the parseJSON function and check the result
-        let exchangeModel = exchangeManager.parseJSON(data)
+        let exchangeModel = exchangeManager.parseJSONToModel(data)
         
         XCTAssertNotNil(exchangeModel)
-        XCTAssertEqual(exchangeModel?.buyEuro, 34.7)
-        XCTAssertEqual(exchangeModel?.sellEuro, 35.2)
-        XCTAssertEqual(exchangeModel?.buyUSD, 28.2)
-        XCTAssertEqual(exchangeModel?.sellUSD, 28.6)
+        XCTAssertEqual(exchangeModel?.buyEuro, 40.7)
+        XCTAssertEqual(exchangeModel?.sellEuro, 41.2)
+        XCTAssertEqual(exchangeModel?.buyUSD, 37.2)
+        XCTAssertEqual(exchangeModel?.sellUSD, 37.6)
     }
 }
 

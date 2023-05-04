@@ -13,4 +13,3 @@ struct ExchangeData: Decodable {
     let buy: String
     let sale: String
 }
-

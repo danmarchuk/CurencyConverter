@@ -35,9 +35,6 @@
                                             <imageReference key="image" image="chevron.forward" catalog="system" symbolScale="medium"/>
                                             <fontDescription key="titleFontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
                                         </buttonConfiguration>
-                                        <connections>
-                                            <action selector="currencyButton:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="yLC-9l-czf"/>
-                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -54,9 +51,6 @@
                                         <rect key="frame" x="0.0" y="0.0" width="244" height="45"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
-                                        <connections>
-                                            <action selector="currencyTextField:" destination="KGk-i7-Jjw" eventType="editingDidEnd" id="RBJ-Ih-SQE"/>
-                                        </connections>
                                     </textField>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>

@@ -9,7 +9,7 @@ import UIKit
 
 final class ViewController: UIViewController {
     
-    @IBOutlet weak var segmentedControll: UISegmentedControl!
+
     var exchangeManager = ExchangeManager()
     var currencyArr: [String] = ["UAH", "EUR", "USD"]
     var userInput = 0.0
@@ -38,7 +38,7 @@ final class ViewController: UIViewController {
     }
     
     @IBAction func buySellAction(_ sender: UISegmentedControl) {
-//        tableView.reloadData()
+        putValueInTheCell(sender.selectedSegmentIndex)
     }
     
     func setUpViewShadow() {
@@ -81,7 +81,7 @@ final class ViewController: UIViewController {
         }
         var message = ""
         
-        if segmentedControll.selectedSegmentIndex == 0 {
+        if segmentedControlOutlet.selectedSegmentIndex == 0 {
             message = "Today, \(getLastSaveTime()) you can sell \(Int(userInput)) UAH for \( manager.formatDoubleToString(userInput / sellUSD)) USD or \( manager.formatDoubleToString(userInput / sellEUR)) EUR"
         } else {
             message = "Today, \(getLastSaveTime()) for \(Int(userInput)) UAH you can buy \( manager.formatDoubleToString(userInput / buyUSD)) USD or \( manager.formatDoubleToString(userInput / buyEUR)) EUR"
@@ -90,6 +90,11 @@ final class ViewController: UIViewController {
         let activityController = UIActivityViewController(activityItems: [message], applicationActivities: nil)
         present(activityController, animated: true)
     }
+    
+    @IBAction func addCurrencyButton(_ sender: UIButton) {
+        
+    }
+    
 }
 
 // MARK: - UITableViewDelegate, UITableViewDataSource
@@ -103,13 +108,14 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         
         cell.currencyButtonOutlet.setTitle(currencyArr[indexPath.row] + fourSpaces, for: .normal)
         cell.currencyTextFieldOutlet.layer.cornerRadius = 5.0
-        cell.currencyTextFieldOutlet.layer.borderWidth = 0.5
-        cell.currencyTextFieldOutlet.layer.borderColor = UIColor.lightGray.cgColor
+//        cell.currencyTextFieldOutlet.layer.borderWidth = 0.5
+//        cell.currencyTextFieldOutlet.layer.borderColor = UIColor.lightGray.cgColor
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 30))
         cell.currencyTextFieldOutlet.leftView = paddingView
         cell.currencyTextFieldOutlet.leftViewMode = .always
         cell.currencyTextFieldOutlet.delegate = self
         cell.currencyTextFieldOutlet.accessibilityIdentifier = "TextField_\(currencyArr[indexPath.row])"
+        cell.currencyTextFieldOutlet.backgroundColor = UIColor(named: "inactiveGray")
         if indexPath.row == 0 {
             cell.currencyTextFieldOutlet.isEnabled = true
             cell.currencyTextFieldOutlet.addTarget(self, action: #selector(ViewController.textFieldDidChange(_:)), for: .editingChanged)
@@ -152,6 +158,7 @@ extension ViewController: ExchangeManagerDelegate {
 // MARK: - UITextFieldDelegate
 extension ViewController: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.layer.borderWidth = 0.5
         textField.layer.borderColor = UIColor.blue.cgColor
         if textField.tag == 0 {
             textField.keyboardType = .numberPad
@@ -159,14 +166,13 @@ extension ViewController: UITextFieldDelegate {
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        textField.layer.borderColor = UIColor.lightGray.cgColor
+        textField.layer.borderWidth = 0.0
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let allowedCharacters = CharacterSet.decimalDigits
         let characterSet = CharacterSet(charactersIn: string)
         return allowedCharacters.isSuperset(of: characterSet)
-        
     }
     
     @objc func textFieldDidChange(_ textField: UITextField) {
@@ -174,9 +180,15 @@ extension ViewController: UITextFieldDelegate {
         guard let firstValue = Double(textField.text ?? "") else {
             return
         }
-        
         userInput = firstValue
-
+        putValueInTheCell(segmentedControlOutlet.selectedSegmentIndex)
+    }
+    
+    @objc func handleTap(_ sender: UITapGestureRecognizer) {
+        view.endEditing(true)
+    }
+    
+    func putValueInTheCell(_ segment: Int) {
         guard let buyEUR = exchangeModel.buyEuro,
         let buyUSD = exchangeModel.sellUSD,
         let sellEUR = exchangeModel.sellEuro,
@@ -184,26 +196,21 @@ extension ViewController: UITextFieldDelegate {
         else {
             return
         }
-        
         // Update the second textfield with the calculated value
         if let cell = tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? TableViewCell {
-            if segmentedControll.selectedSegmentIndex == 0 {
-                cell.currencyTextFieldOutlet.text = manager.formatDoubleToString(firstValue / buyEUR)
-            } else if segmentedControll.selectedSegmentIndex == 1 {
-                cell.currencyTextFieldOutlet.text = manager.formatDoubleToString(firstValue / sellEUR)
+            if segment == 0 {
+                cell.currencyTextFieldOutlet.text = manager.formatDoubleToString(userInput / buyEUR)
+            } else if segment == 1 {
+                cell.currencyTextFieldOutlet.text = manager.formatDoubleToString(userInput / sellEUR)
             }
         }
         
         if let cell = tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? TableViewCell {
-            if segmentedControll.selectedSegmentIndex == 0 {
-                cell.currencyTextFieldOutlet.text = manager.formatDoubleToString(firstValue / buyUSD)
-            } else if segmentedControll.selectedSegmentIndex == 1 {
-                cell.currencyTextFieldOutlet.text = manager.formatDoubleToString(firstValue / sellUSD)
+            if segment == 0 {
+                cell.currencyTextFieldOutlet.text = manager.formatDoubleToString(userInput / buyUSD)
+            } else if segment == 1 {
+                cell.currencyTextFieldOutlet.text = manager.formatDoubleToString(userInput / sellUSD)
             }
         }
-    }
-    
-    @objc func handleTap(_ sender: UITapGestureRecognizer) {
-        view.endEditing(true)
     }
 }

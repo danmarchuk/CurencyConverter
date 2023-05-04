@@ -7,26 +7,11 @@
 
 import UIKit
 
-class TableViewCell: UITableViewCell {
-
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
+final class TableViewCell: UITableViewCell {
 
     @IBOutlet weak var currencyButtonOutlet: UIButton!
-    @IBAction func currencyButton(_ sender: UIButton) {
-    }
     
     @IBOutlet weak var currencyTextFieldOutlet: UITextField!
-    
-    @IBAction func currencyTextField(_ sender: UITextField) {
-    }
-    
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-        // Configure the view for the selected state
-    }
 }
 
 

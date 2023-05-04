@@ -30,17 +30,16 @@ struct ExchangeManager {
                     self.delegate?.didFailWithError(error: error!)
                     return
                 }
-                if let safeData = data {
-                    if let exchangeRate = self.parseJSON(safeData) {
-                        delegate?.didUpdateExchangeRate(self, exchange: exchangeRate)
-                    }
+                if let safeData = data,
+                   let exchangeRate = self.parseJSONToModel(safeData) {
+                    delegate?.didUpdateExchangeRate(self, exchange: exchangeRate)
                 }
             }
             task.resume()
         }
     }
     
-    func parseJSON(_ exchangeData: Data) -> ExchangeModel? {
+    func parseJSONToModel(_ exchangeData: Data) -> ExchangeModel? {
         let decoder = JSONDecoder()
         do {
             let decodedData = try decoder.decode([ExchangeData].self, from: exchangeData)
@@ -56,10 +55,8 @@ struct ExchangeManager {
             
             return exchangeModel
         } catch {
-            print(error)
             delegate?.didFailWithError(error: error)
             return nil
         }
     }
 }
-
