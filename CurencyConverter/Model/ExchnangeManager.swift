@@ -11,13 +11,24 @@ protocol ExchangeManagerDelegate {
     func didFailWithError(error: Error)
 }
 
-struct ExchangeManager {
+class ExchangeManager {
     let exchangeURL = "https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5"
     var delegate: ExchangeManagerDelegate?
     
     func fetchCurrency(){
         let urlString = exchangeURL
-        performRequest(with: urlString)
+        let currentDate = Date()
+        let defaults = UserDefaults.standard
+        
+        if let savedDate = defaults.object(forKey: "lastFetchedDate") as? Date {
+            let timeDifference = currentDate.timeIntervalSince(savedDate)
+            if timeDifference >= 3600 {
+                // If the difference is more than an hour, perform the request
+                performRequest(with: urlString)
+            }
+        } else {
+            performRequest(with: urlString)
+        }
     }
     
     func performRequest(with urlString: String) {
@@ -25,14 +36,18 @@ struct ExchangeManager {
             // create a URL session
             let session = URLSession(configuration: .default)
             // give session a task
-            let task = session.dataTask(with: url) { data, response, error in
+            let task = session.dataTask(with: url) { [weak self] data, response, error in
                 if error != nil {
-                    self.delegate?.didFailWithError(error: error!)
+                    self?.delegate?.didFailWithError(error: error!)
                     return
                 }
                 if let safeData = data,
-                   let exchangeRate = self.parseJSONToModel(safeData) {
-                    delegate?.didUpdateExchangeRate(self, exchange: exchangeRate)
+                   let exchangeRate = self?.parseJSONToModel(safeData) {
+                    // Update the last fetched date
+                    let currentDate = Date()
+                    let defaults = UserDefaults.standard
+                    defaults.set(currentDate, forKey: "lastFetchedDate")
+                    self?.delegate?.didUpdateExchangeRate(self!, exchange: exchangeRate)
                 }
             }
             task.resume()
@@ -52,6 +67,8 @@ struct ExchangeManager {
             let sellUsd = Double(usd.sale)
             
             let exchangeModel = ExchangeModel(buyEuro: buyEuro, sellEuro: sellEuro, buyUSD: buyUsd, sellUSD: sellUsd)
+            let defaults = UserDefaults.standard
+            defaults.set(try? PropertyListEncoder().encode(exchangeModel), forKey: "exchangeModel")
             
             return exchangeModel
         } catch {

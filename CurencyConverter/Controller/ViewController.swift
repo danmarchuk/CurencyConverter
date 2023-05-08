@@ -9,32 +9,39 @@ import UIKit
 
 final class ViewController: UIViewController {
     
-
+    
     var exchangeManager = ExchangeManager()
     var currencyArr: [String] = ["UAH", "EUR", "USD"]
     var userInput = 0.0
     let fourSpaces = "    "
     // get last save date from the memory
-    let savedDate = UserDefaults.standard.object(forKey: "savedDate") as? Date ?? Date.distantPast
+    let savedDate = UserDefaults.standard.object(forKey: "lastFetchedDate") as? Date ?? Date.distantPast
     var exchangeModel = ExchangeModel()
     @IBOutlet weak var mainView: UIView!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var segmentedControlOutlet: UISegmentedControl!
     let manager = Manager()
+    var currencyViewController = CurrencyViewController()
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("thi is tha saved date \(savedDate)")
+        print(exchangeModel)
         // Do any additional setup after loading the view.
         setUpViewShadow()
         setUpTableView()
         exchangeManager.delegate = self
         exchangeManager.fetchCurrency()
-        dateLabel.text = getLastSaveTime()
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-                view.addGestureRecognizer(tapGesture)
+        view.addGestureRecognizer(tapGesture)
         segmentedControlOutlet.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.white], for: .selected)
+        getExchangeModelFromMemory()
+        DispatchQueue.main.async {
+            self.dateLabel.text = self.getLastSaveTime()
+            self.putValueInTheCell(self.segmentedControlOutlet.selectedSegmentIndex)
+        }
     }
     
     @IBAction func buySellAction(_ sender: UISegmentedControl) {
@@ -61,21 +68,31 @@ final class ViewController: UIViewController {
             exchangeModel = model
         }
     }
-
+    
     func getLastSaveTime() -> String {
-        let dateFormat = "yyyy MMMM dd HH:mm"
+        let dateToFormat: Date
+
+        // If there is no saved date, use the current date
+        if savedDate == Date.distantPast {
+            dateToFormat = Date() // Use the current date
+        } else {
+            dateToFormat = savedDate // Use the saved date
+        }
+
+        let dateFormat = "yyyy MMM dd HH:mm"
         let dateFormatter = DateFormatter()
         // Set the locale to ensure month name is displayed in English
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         dateFormatter.dateFormat = dateFormat
-        return dateFormatter.string(from: savedDate)
+        return dateFormatter.string(from: dateToFormat)
     }
 
+    
     @IBAction func shareButtonAction(_ sender: UIButton) {
         guard let buyEUR = exchangeModel.buyEuro,
-        let buyUSD = exchangeModel.sellUSD,
-        let sellEUR = exchangeModel.sellEuro,
-        let sellUSD = exchangeModel.sellUSD
+              let buyUSD = exchangeModel.sellUSD,
+              let sellEUR = exchangeModel.sellEuro,
+              let sellUSD = exchangeModel.sellUSD
         else {
             return
         }
@@ -92,9 +109,15 @@ final class ViewController: UIViewController {
     }
     
     @IBAction func addCurrencyButton(_ sender: UIButton) {
-        
+        performSegue(withIdentifier: "fromMainToCurrency", sender: self)
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "fromMainToCurrency" {
+            let destinationVC = segue.destination as! CurrencyViewController
+            destinationVC.delegate = self
+        }
+    }
 }
 
 // MARK: - UITableViewDelegate, UITableViewDataSource
@@ -108,8 +131,8 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         
         cell.currencyButtonOutlet.setTitle(currencyArr[indexPath.row] + fourSpaces, for: .normal)
         cell.currencyTextFieldOutlet.layer.cornerRadius = 5.0
-//        cell.currencyTextFieldOutlet.layer.borderWidth = 0.5
-//        cell.currencyTextFieldOutlet.layer.borderColor = UIColor.lightGray.cgColor
+        //        cell.currencyTextFieldOutlet.layer.borderWidth = 0.5
+        //        cell.currencyTextFieldOutlet.layer.borderColor = UIColor.lightGray.cgColor
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 30))
         cell.currencyTextFieldOutlet.leftView = paddingView
         cell.currencyTextFieldOutlet.leftViewMode = .always
@@ -132,22 +155,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 // MARK: - ExchangeManagerDelegate
 extension ViewController: ExchangeManagerDelegate {
     func didUpdateExchangeRate(_ manager: ExchangeManager, exchange: ExchangeModel) {
-        
-        let currentDate = Date()
-        let timeInterval = currentDate.timeIntervalSince(savedDate)
-        let oneHour: TimeInterval = 3600
-        
-        // if an hour elapsed from the last update, refresh the model
-        if timeInterval >= oneHour {
-            // Update the time here
-            UserDefaults.standard.set(currentDate, forKey: "savedDate")
-            // save the exchange model to the user defaults
-            let defaults = UserDefaults.standard
-            defaults.set(try? PropertyListEncoder().encode(exchange), forKey: "exchangeModel")
-            getExchangeModelFromMemory()
-        } else {
-            getExchangeModelFromMemory()
-        }
+        exchangeModel = exchange
     }
     
     func didFailWithError(error: Error) {
@@ -190,27 +198,55 @@ extension ViewController: UITextFieldDelegate {
     
     func putValueInTheCell(_ segment: Int) {
         guard let buyEUR = exchangeModel.buyEuro,
-        let buyUSD = exchangeModel.sellUSD,
-        let sellEUR = exchangeModel.sellEuro,
-        let sellUSD = exchangeModel.sellUSD
+              let buyUSD = exchangeModel.sellUSD,
+              let sellEUR = exchangeModel.sellEuro,
+              let sellUSD = exchangeModel.sellUSD
         else {
             return
         }
-        // Update the second textfield with the calculated value
-        if let cell = tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? TableViewCell {
-            if segment == 0 {
-                cell.currencyTextFieldOutlet.text = manager.formatDoubleToString(userInput / buyEUR)
-            } else if segment == 1 {
-                cell.currencyTextFieldOutlet.text = manager.formatDoubleToString(userInput / sellEUR)
+        
+        let numberOfRows = tableView.numberOfRows(inSection: 0)
+        
+        for row in 0..<numberOfRows {
+            if let cell = tableView.cellForRow(at: IndexPath(row: row, section: 0)) as? TableViewCell {
+                let currency = cell.currencyButtonOutlet.title(for: .normal)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+                
+                var conversionRate: Double? = nil
+                
+                if segment == 0 {
+                    switch currency {
+                    case "EUR":
+                        conversionRate = buyEUR
+                    case "USD":
+                        conversionRate = buyUSD
+                    default:
+                        break
+                    }
+                } else if segment == 1 {
+                    switch currency {
+                    case "EUR":
+                        conversionRate = sellEUR
+                    case "USD":
+                        conversionRate = sellUSD
+                    default:
+                        break
+                    }
+                }
+                
+                if let rate = conversionRate {
+                    cell.currencyTextFieldOutlet.text = manager.formatDoubleToString(userInput / rate)
+                }
             }
         }
-        
-        if let cell = tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? TableViewCell {
-            if segment == 0 {
-                cell.currencyTextFieldOutlet.text = manager.formatDoubleToString(userInput / buyUSD)
-            } else if segment == 1 {
-                cell.currencyTextFieldOutlet.text = manager.formatDoubleToString(userInput / sellUSD)
-            }
+    }
+    
+}
+
+extension ViewController: CurrencyViewControllerDelegate {
+    func didSelectCurrency(_ currencyViewController: CurrencyViewController, currency: String) {
+        currencyArr.append(currency)
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
         }
     }
 }
