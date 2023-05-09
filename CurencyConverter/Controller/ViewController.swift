@@ -23,6 +23,7 @@ final class ViewController: UIViewController {
     @IBOutlet weak var segmentedControlOutlet: UISegmentedControl!
     let manager = Manager()
     var currencyViewController = CurrencyViewController()
+    var currentUAHInput: String?
     
     
     override func viewDidLoad() {
@@ -41,6 +42,7 @@ final class ViewController: UIViewController {
         DispatchQueue.main.async {
             self.dateLabel.text = self.getLastSaveTime()
             self.putValueInTheCell(self.segmentedControlOutlet.selectedSegmentIndex)
+            self.clearOtherTextFields()
         }
     }
     
@@ -186,11 +188,23 @@ extension ViewController: UITextFieldDelegate {
     @objc func textFieldDidChange(_ textField: UITextField) {
         // Get the value of the first textfield
         guard let firstValue = Double(textField.text ?? "") else {
+            clearOtherTextFields()
             return
         }
         userInput = firstValue
         putValueInTheCell(segmentedControlOutlet.selectedSegmentIndex)
     }
+    
+    func clearOtherTextFields() {
+        let numberOfRows = tableView.numberOfRows(inSection: 0)
+        
+        for row in 1..<numberOfRows { // Start from row 1 to skip the UAH text field
+            if let cell = tableView.cellForRow(at: IndexPath(row: row, section: 0)) as? TableViewCell {
+                cell.currencyTextFieldOutlet.text = ""
+            }
+        }
+    }
+    
     
     @objc func handleTap(_ sender: UITapGestureRecognizer) {
         view.endEditing(true)
@@ -204,15 +218,15 @@ extension ViewController: UITextFieldDelegate {
         else {
             return
         }
-        
+
         let numberOfRows = tableView.numberOfRows(inSection: 0)
-        
+
         for row in 0..<numberOfRows {
             if let cell = tableView.cellForRow(at: IndexPath(row: row, section: 0)) as? TableViewCell {
                 let currency = cell.currencyButtonOutlet.title(for: .normal)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-                
+
                 var conversionRate: Double? = nil
-                
+
                 if segment == 0 {
                     switch currency {
                     case "EUR":
@@ -232,7 +246,7 @@ extension ViewController: UITextFieldDelegate {
                         break
                     }
                 }
-                
+
                 if let rate = conversionRate {
                     cell.currencyTextFieldOutlet.text = manager.formatDoubleToString(userInput / rate)
                 }
@@ -244,9 +258,24 @@ extension ViewController: UITextFieldDelegate {
 
 extension ViewController: CurrencyViewControllerDelegate {
     func didSelectCurrency(_ currencyViewController: CurrencyViewController, currency: String) {
+        // Store the current UAH input value
+        if let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? TableViewCell {
+            currentUAHInput = cell.currencyTextFieldOutlet.text
+        }
+
         currencyArr.append(currency)
         DispatchQueue.main.async {
             self.tableView.reloadData()
+            self.putValueInTheCell(self.segmentedControlOutlet.selectedSegmentIndex)
+
+            // Restore the previous UAH input value
+            if let cell = self.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? TableViewCell {
+                cell.currencyTextFieldOutlet.text = self.currentUAHInput
+                if let inputValue = Double(self.currentUAHInput ?? "") {
+                    self.userInput = inputValue
+                }
+            }
         }
     }
 }
+
