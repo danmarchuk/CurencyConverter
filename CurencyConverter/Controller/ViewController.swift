@@ -9,8 +9,14 @@ import UIKit
 
 final class ViewController: UIViewController {
     
+    // dependency injection of Exchange Manager
+    var exchangeManager: ExchangeManager
     
-    var exchangeManager = ExchangeManager()
+    required init?(coder: NSCoder) {
+        self.exchangeManager = ExchangeManager()
+        super.init(coder: coder)
+    }
+    
     var currencyArr: [String] = ["UAH", "EUR", "USD"]
     var userInput = 0.0
     let fourSpaces = "    "
@@ -22,14 +28,10 @@ final class ViewController: UIViewController {
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var segmentedControlOutlet: UISegmentedControl!
     let manager = Manager()
-    var currencyViewController = CurrencyViewController()
     var currentUAHInput: String?
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("thi is tha saved date \(savedDate)")
-        print(exchangeModel)
         // Do any additional setup after loading the view.
         setUpViewShadow()
         setUpTableView()
@@ -89,25 +91,27 @@ final class ViewController: UIViewController {
         return dateFormatter.string(from: dateToFormat)
     }
 
-    
     @IBAction func shareButtonAction(_ sender: UIButton) {
+        var message = createMessage()
+        let activityController = UIActivityViewController(activityItems: [message], applicationActivities: nil)
+        present(activityController, animated: true)
+    }
+    
+    func createMessage() -> String {
         guard let buyEUR = exchangeModel.buyEuro,
               let buyUSD = exchangeModel.sellUSD,
               let sellEUR = exchangeModel.sellEuro,
               let sellUSD = exchangeModel.sellUSD
         else {
-            return
+            return ""
         }
         var message = ""
-        
         if segmentedControlOutlet.selectedSegmentIndex == 0 {
             message = "Today, \(getLastSaveTime()) you can sell \(Int(userInput)) UAH for \( manager.formatDoubleToString(userInput / sellUSD)) USD or \( manager.formatDoubleToString(userInput / sellEUR)) EUR"
         } else {
             message = "Today, \(getLastSaveTime()) for \(Int(userInput)) UAH you can buy \( manager.formatDoubleToString(userInput / buyUSD)) USD or \( manager.formatDoubleToString(userInput / buyEUR)) EUR"
         }
-        
-        let activityController = UIActivityViewController(activityItems: [message], applicationActivities: nil)
-        present(activityController, animated: true)
+        return message
     }
     
     @IBAction func addCurrencyButton(_ sender: UIButton) {
@@ -133,8 +137,6 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         
         cell.currencyButtonOutlet.setTitle(currencyArr[indexPath.row] + fourSpaces, for: .normal)
         cell.currencyTextFieldOutlet.layer.cornerRadius = 5.0
-        //        cell.currencyTextFieldOutlet.layer.borderWidth = 0.5
-        //        cell.currencyTextFieldOutlet.layer.borderColor = UIColor.lightGray.cgColor
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 30))
         cell.currencyTextFieldOutlet.leftView = paddingView
         cell.currencyTextFieldOutlet.leftViewMode = .always
@@ -205,7 +207,6 @@ extension ViewController: UITextFieldDelegate {
         }
     }
     
-    
     @objc func handleTap(_ sender: UITapGestureRecognizer) {
         view.endEditing(true)
     }
@@ -253,7 +254,6 @@ extension ViewController: UITextFieldDelegate {
             }
         }
     }
-    
 }
 
 extension ViewController: CurrencyViewControllerDelegate {

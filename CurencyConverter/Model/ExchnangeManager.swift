@@ -11,7 +11,7 @@ protocol ExchangeManagerDelegate {
     func didFailWithError(error: Error)
 }
 
-class ExchangeManager {
+final class ExchangeManager {
     let exchangeURL = "https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5"
     var delegate: ExchangeManagerDelegate?
     
@@ -40,6 +40,14 @@ class ExchangeManager {
                 if error != nil {
                     self?.delegate?.didFailWithError(error: error!)
                     return
+                }
+                // check the response status code
+                if let httpResponse = response as? HTTPURLResponse {
+                    guard httpResponse.statusCode == 200 else {
+                        let error = NSError(domain: "", code: httpResponse.statusCode, userInfo: nil)
+                        self?.delegate?.didFailWithError(error: error)
+                        return
+                    }
                 }
                 if let safeData = data,
                    let exchangeRate = self?.parseJSONToModel(safeData) {
@@ -75,5 +83,13 @@ class ExchangeManager {
             delegate?.didFailWithError(error: error)
             return nil
         }
+    }
+}
+
+extension ExchangeManager: ExchangeManagerDelegate {
+    func didUpdateExchangeRate(_ manager: ExchangeManager, exchange: ExchangeModel) {
+    }
+    
+    func didFailWithError(error: Error) {
     }
 }
