@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ExchangeModel: Codable {
+struct ExchangeModel: Codable, Equatable {
     var buyEuro: Double?
     var sellEuro: Double?
     var buyUSD: Double?

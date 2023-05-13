@@ -15,6 +15,12 @@ final class ExchangeManager {
     let exchangeURL = "https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5"
     var delegate: ExchangeManagerDelegate?
     
+    // URL session injection for testing
+    var session: URLSession
+    init(session: URLSession = URLSession.shared) {
+        self.session = session
+    }
+    
     func fetchCurrency(){
         let urlString = exchangeURL
         let currentDate = Date()
