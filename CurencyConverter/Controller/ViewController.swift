@@ -40,9 +40,12 @@ final class ViewController: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         view.addGestureRecognizer(tapGesture)
         segmentedControlOutlet.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.white], for: .selected)
-        getExchangeModelFromMemory()
+        exchangeModel = manager.getExchangeModelFromMemory()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
         DispatchQueue.main.async {
-            self.dateLabel.text = self.getLastSaveTime()
+            self.dateLabel.text = self.manager.getLastSaveTime(self.savedDate)
             self.putValueInTheCell(self.segmentedControlOutlet.selectedSegmentIndex)
             self.clearOtherTextFields()
         }
@@ -66,52 +69,11 @@ final class ViewController: UIViewController {
         tableView.dataSource = self
         tableView.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "TableViewCell")
     }
-    
-    func getExchangeModelFromMemory() {
-        if let data = UserDefaults.standard.value(forKey: "exchangeModel") as? Data, let model = try? PropertyListDecoder().decode(ExchangeModel.self, from: data) {
-            exchangeModel = model
-        }
-    }
-    
-    func getLastSaveTime() -> String {
-        let dateToFormat: Date
-
-        // If there is no saved date, use the current date
-        if savedDate == Date.distantPast {
-            dateToFormat = Date() // Use the current date
-        } else {
-            dateToFormat = savedDate // Use the saved date
-        }
-
-        let dateFormat = "yyyy MMM dd HH:mm"
-        let dateFormatter = DateFormatter()
-        // Set the locale to ensure month name is displayed in English
-        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-        dateFormatter.dateFormat = dateFormat
-        return dateFormatter.string(from: dateToFormat)
-    }
 
     @IBAction func shareButtonAction(_ sender: UIButton) {
-        var message = createMessage()
+        let message = manager.createMessage(exchangeModel, userInput, savedDate, segmentedControlOutlet.selectedSegmentIndex)
         let activityController = UIActivityViewController(activityItems: [message], applicationActivities: nil)
         present(activityController, animated: true)
-    }
-    
-    func createMessage() -> String {
-        guard let buyEUR = exchangeModel.buyEuro,
-              let buyUSD = exchangeModel.sellUSD,
-              let sellEUR = exchangeModel.sellEuro,
-              let sellUSD = exchangeModel.sellUSD
-        else {
-            return ""
-        }
-        var message = ""
-        if segmentedControlOutlet.selectedSegmentIndex == 0 {
-            message = "Today, \(getLastSaveTime()) you can sell \(Int(userInput)) UAH for \( manager.formatDoubleToString(userInput / sellUSD)) USD or \( manager.formatDoubleToString(userInput / sellEUR)) EUR"
-        } else {
-            message = "Today, \(getLastSaveTime()) for \(Int(userInput)) UAH you can buy \( manager.formatDoubleToString(userInput / buyUSD)) USD or \( manager.formatDoubleToString(userInput / buyEUR)) EUR"
-        }
-        return message
     }
     
     @IBAction func addCurrencyButton(_ sender: UIButton) {
@@ -133,7 +95,8 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "TableViewCell", for: indexPath) as! TableViewCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "TableViewCell", for: indexPath) as? TableViewCell
+        else {return TableViewCell()}
         
         cell.currencyButtonOutlet.setTitle(currencyArr[indexPath.row] + fourSpaces, for: .normal)
         cell.currencyTextFieldOutlet.layer.cornerRadius = 5.0
@@ -163,7 +126,7 @@ extension ViewController: ExchangeManagerDelegate {
     }
     
     func didFailWithError(error: Error) {
-        getExchangeModelFromMemory()
+        exchangeModel = manager.getExchangeModelFromMemory()
     }
 }
 
