@@ -15,7 +15,7 @@
   - [Installation and Usage](#installation-and-usage)
   - [License](#license)
 
-This is a currency converter application that allows users to quickly assess the current exchange rate and perform currency conversions. The application also provides the ability to view the national bank exchange rate on a selected day for the past year.
+This is a currency converter application that allows users to quickly assess the current exchange rate and perform currency conversions.
 
 ## Completion Requirements
 
