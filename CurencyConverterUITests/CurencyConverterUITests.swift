@@ -6,36 +6,41 @@
 //
 
 import XCTest
+@testable import CurencyConverter
 
 final class CurencyConverterUITests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    var app: XCUIApplication!
 
-        // In UI tests it is usually best to stop immediately when a failure occurs.
+    override func setUp() {
+        super.setUp()
         continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // UI tests must launch the application that they test.
-        let app = XCUIApplication()
+        app = XCUIApplication()
         app.launch()
-
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
 
-    func testLaunchPerformance() throws {
-        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
-            // This measures how long it takes to launch your application.
-            measure(metrics: [XCTApplicationLaunchMetric()]) {
-                XCUIApplication().launch()
-            }
-        }
+    override func tearDown() {
+        app = nil
+        super.tearDown()
+    }
+
+    func testTableViewHasCells() {
+        let cells = app.tables.cells
+        XCTAssert(cells.count == 3, "Expected 3 cells, but found \(cells.count)")
+    }
+
+    func testTableCellTextField() {
+        let cell = app.tables.cells.element(boundBy: 0)
+        let textField = cell.textFields["TextField_0"]
+        XCTAssert(textField.exists, "Currency text field doesn't exist")
+        textField.tap()
+        textField.typeText("100")
+        XCTAssertEqual(textField.value as? String, "100", "TextField value is not equal to expected value")
+    }
+
+    func testShareButton() {
+        let shareButton = app.buttons["shareButton"]
+        XCTAssert(shareButton.exists, "Share button doesn't exist")
+        shareButton.tap()
     }
 }
